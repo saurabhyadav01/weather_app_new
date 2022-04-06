@@ -1,0 +1,324 @@
+<!-- https://api.openweathermap.org/data/2.5/onecall?lat={lat}&lon={lon}&exclude={part}&appid={API key} -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+      /* body{
+        background-image: url("https://tse1.mm.bing.net/th/id/OET.5b1703ee77864b7093f638e2225ede7d?w=272&h=272&c=7&rs=1&o=5&dpr=1.25&pid=1.9");
+      
+      background-repeat: no-repeat;
+     
+      } */
+        *
+        {
+            margin: 0;
+            padding: 0;
+        }
+        .searchDiv
+        {
+            border: 1px solid wheat;
+            width: 70%;
+            margin: auto;
+            margin-top: 20px;
+        background-color: skyblue;
+        
+        }.searchDiv>input
+        {
+            width: 50%;
+            height: 40px;
+            margin: 20px 20px;
+            border-radius: 5px 5px;
+            border: none;
+        }.searchDiv>button
+        {
+            width: 20%;
+            height: 43px;
+            font-size: 20px;
+            border: none;
+           
+            border-radius: 5px;
+            background-color: white;
+        }.searchDiv>button:hover{
+            background-color: rgb(207, 140, 140);
+            color: white;
+        }
+        h1{
+            text-align: center;
+        } .data_container
+       
+        {
+        display: flex;
+        width: 100%;
+       margin-left: 15%;
+       margin-top: 20px;
+        }
+        .Wheteher
+        {
+     
+            width: 40%;
+            height: 440px;
+           background-color: turquoise;
+            
+            color: white;
+          
+        }
+       
+        .Wheteher>div:nth-child(1)
+        {
+          display: grid;
+          grid-template-columns: repeat(3,1fr);
+          grid-template-rows: repeat(2,50px);
+         border: 1px solid green;
+         background-color: rgb(81, 81, 253);
+       
+        
+        }.Wheteher>div>p{
+        
+          font-size: 20px;
+          border: 1px solid wheat;
+        }.Wheteher>div:nth-child(2)
+
+        {
+         
+         display: grid;
+         
+         grid-template-columns: repeat(2,1fr);
+         grid-template-rows:repeat(2,100px);
+          grid-gap: 20px;
+        }.Wheteher>div:nth-child(2)>p{
+          color:red;
+          font-size: 22px;
+          margin-top: 50px;
+          border-radius: 5px;
+          padding: 10px;
+          box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+          text-align: center;
+        }
+        iframe
+        {
+          margin-right: 150px;
+        }
+        .sevenDayWeather
+        {
+            border: 1px solid wheat;
+            width: 70%;
+            margin: auto;
+            margin-top: 20px;
+        background-color: black;
+        color: white;
+        display: flex;
+        border-radius: 10px;
+        }.sevenDayWeather>div
+        {
+         
+       border-left: 1px solid wheat;
+        
+        height: 200px;
+        width: 200px;
+        text-align: center;
+        font-size: 20px;
+        padding: 20px;
+        
+        }.sevenDayWeather>div>p{
+          margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+  
+  <div class="container">
+      <div class="searchDiv">
+            <h1>SEARCH WEATHER OF YOUR CITY</h1>
+    
+    <input type="text" id="city" placeholder="
+    Enter City Name">
+<button onclick="getWheteher()">GET WHEATHER</button>
+
+
+    </div>
+  <div class="data_container">
+    <div class="Wheteher">
+
+    </div>
+    
+   <div class="gmap_canvas">
+        <iframe width="460" height="450" id="gmap_canvas"
+         frameborder="0" scrolling="no" marginheight="0" marginwidth="0"></iframe>
+      </div>
+ </div> 
+<div class="sevenDayWeather">
+    
+</div>
+</body>
+</html>
+<script>
+
+
+
+  
+      async function getWheteher()
+      {
+        try{
+          var city=document.querySelector("#city").value ;
+        var res=await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}
+        &appid=e26bd68cd33e49a7fb77b5b1d1be03ad&units=metric`);
+        var data=await res.json();
+       
+        var lon=data.coord.lon;
+        var lat=data.coord.lat;
+       // console.log(x,y)
+         var res2=await fetch(`https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&exclude={part}&appid=e26bd68cd33e49a7fb77b5b1d1be03ad&units=metric`)
+        var data2=await res2.json();
+       dailyData=data2.daily;
+       weekDataDisplay(dailyData)
+
+
+       
+        getData(data)
+         map(city)
+        }catch(e)
+        {
+          console.log("Error"+e)
+        }
+      }
+  
+
+      function getData(data)
+      {
+
+        document.querySelector(".Wheteher").innerHTML=""
+        var container1=document.createElement("div");
+
+        var city=document.createElement("p");
+        city.textContent="City Name : "+data.name;
+        var country=document.createElement("p");
+        country.textContent="Country Name : "+data.sys.country
+       
+        
+        
+       
+        var minTemp=document.createElement("p");
+        minTemp.textContent="Min Tepm : "+data.main.temp_min+" °";
+        console.log(data.sys.country)
+        
+        var maxTemp=document.createElement("p");
+        maxTemp.textContent="MaxTemp: "+data.main.temp_max +" °";
+        
+        var wind=document.createElement("p");
+        wind.textContent="Wind Speed : "+data.wind.speed+"Km/h";
+        
+        var humidity=document.createElement("p");
+        humidity.textContent="Humidity : "+data.main. humidity;
+        
+
+        var mainContent=document.createElement("div");
+
+        var clouds=document.createElement("p");
+        clouds.textContent="Cloud: "+data.clouds.all;
+
+        var temp=document.createElement("p");
+        temp.textContent="Temp : "+data.main.temp+" °";
+       
+
+        var sunrise=document.createElement("p");
+        
+        var date=new Date(data.sys.sunrise*1000);
+        var hourse=date.getHours()
+        var minute=date.getMinutes()
+        var time=(hourse+":"+minute)
+        sunrise.textContent="Sunrise : "+time+"am";
+
+        var sunset=document.createElement("p");
+        var date=new Date(data.sys.sunset*1000);
+        var hourse=date.getHours()
+        var minute=date.getMinutes()
+        var time2=(hourse+":"+minute)
+        sunset.textContent="Sunset : "+time2+"pm";
+        
+        mainContent.append(sunrise,sunset,temp,clouds)
+        container1.append(city,country,minTemp,maxTemp,wind,humidity)
+        
+        document.querySelector(".Wheteher").append(container1,mainContent)
+      }
+
+      function map(city)
+      {
+        var iframeDiv= document.querySelector("#gmap_canvas");
+        
+        iframeDiv.src="https://maps.google.com/maps?q="+city+"&t=&z=13&ie=UTF8&iwloc=&output=embed";
+        
+      }
+      weekDataDisplay()
+var count=0;
+     function weekDataDisplay(dailyData)
+      {
+       //console.log(dailyData);
+       dailyData.map(function(elem,index)
+       {
+        var mainDiv=document.createElement("div");
+        //console.log(elem.weather.icon)
+        console.log(elem.weather[0].icon)
+        var img=elem.weather[0].icon;
+        
+       // var day=["sunday","Mpnday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+      
+       if(index<=6)
+       {
+        var date=new Date(elem.dt*1000)
+        var day=document.createElement("p");
+        console.log(date.getDay())
+        if(date.getDay()==0)
+        {
+      
+        day.textContent="Sunday";
+        }else if(date.getDay()==1)
+        {
+          day.textContent="Monday";
+        }
+        else if(date.getDay()==2)
+        {
+          day.textContent="Tuesday";
+        }
+        else if(date.getDay()==3)
+        {
+          day.textContent="Wednesday";
+        }
+        else if(date.getDay()==4)
+        {
+          day.textContent="Thrusday";
+        }
+        else if(date.getDay()==5)
+        {
+          day.textContent="Friday";
+        }
+        else if(date.getDay()==6)
+        {
+          day.textContent="Saturday";
+        }
+          
+        var max=document.createElement("div");
+        var imgDiv=document.createElement("img");
+        var link="http://openweathermap.org/img/wn/"+img+"@2x.png";
+     
+        imgDiv.setAttribute("src",link);
+        console.log(link)
+       
+        var minTemp=document.createElement("p");
+        minTemp.textContent=elem.temp.min +" °";
+        
+        var min=document.createElement("div");
+        var maxTemp=document.createElement("p");
+        maxTemp.textContent=+elem.temp.max +" °";
+       max.append(maxTemp,imgDiv)
+       min.append(minTemp)
+        mainDiv.append(day,imgDiv,max,min);
+        document.querySelector(".sevenDayWeather").append(mainDiv)
+       }
+       })
+   
+      }
+</script>
